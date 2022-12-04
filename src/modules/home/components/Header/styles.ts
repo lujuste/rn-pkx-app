@@ -68,7 +68,23 @@ export const MenuDots = styled.View`
   height: 250px;
   background-color: white;
   position: absolute;
-  z-index: 99;
+  z-index: 990;
   top: 10px;
   right: 10px;
+  padding: 16px;
+  padding-top: 0px;
+`;
+
+export const Box = styled.View`
+  width: 207px;
+  height: 500px;
+  background-color: #fff;
+  display: flex;
+  margin-left: auto;
+`;
+
+export const TextLabel = styled.Text`
+  font-size: 24px;
+  color: #000;
+  margin: 14px 3px;
 `;

@@ -1,5 +1,11 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import {
+  Button as ButtonNative,
+  Text as TextNative,
+  View as ViewNative,
+} from "react-native";
+import Modal from "react-native-modal";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   Button,
@@ -15,6 +21,7 @@ import {
 import Icon from "../../../../assets/home.svg";
 import Header from "../Header";
 import { MenuDots } from "../Header/styles";
+import PopupMenu from "../PopupMenu";
 
 interface INavigation extends NativeStackNavigationProp<any, any> {}
 
@@ -23,22 +30,12 @@ const HomeScreen: React.FC = () => {
 
   const [viewOptions, setViewOption] = useState(false);
 
+  const handleModal = useCallback(() => {
+    setViewOption(!viewOptions);
+  }, []);
+
   return (
     <Container>
-      {viewOptions && (
-        <MenuDots
-          style={{
-            elevation: 15,
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 40,
-              height: 42,
-            },
-            shadowOpacity: 1,
-            shadowRadius: 23.84,
-          }}
-        ></MenuDots>
-      )}
       <Header activeOptions={viewOptions} setActiveOptions={setViewOption} />
       <View overScrollMode="never">
         <WrapperPokemon>
