@@ -40,18 +40,35 @@ export const InputWrapper = styled.View`
   display: flex;
   align-items: center;
   border-radius: 5px;
+  justify-content: space-between;
+  flex-direction: row;
 `;
 
 export const ClosedButton = styled.View`
-  width: 30%;
+  width: 15%;
   height: 100%;
   align-items: center;
   justify-content: center;
 `;
 
 export const AreaInput = styled.View`
-  width: 70%;
+  width: 85%;
   height: 100%;
   align-items: center;
   justify-content: center;
+`;
+
+export const InputDefault = styled.TextInput`
+  width: 100%;
+  height: 100%;
+`;
+
+export const MenuDots = styled.View`
+  width: 207px;
+  height: 250px;
+  background-color: white;
+  position: absolute;
+  z-index: 99;
+  top: 10px;
+  right: 10px;
 `;

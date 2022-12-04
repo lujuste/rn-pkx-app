@@ -5,6 +5,8 @@ export const Container = styled.View`
   flex: 1;
   background-color: white;
   display: flex;
+  z-index: 10;
+  position: relative;
 `;
 
 export const View = styled.ScrollView`
@@ -34,10 +36,7 @@ export const WrapperPokemon = styled.View`
   /* background: #d9d9d9; */
   justify-content: space-between;
   flex-direction: row;
-
-  :last-child {
-    background-color: red;
-  }
+  margin-bottom: 15px;
 `;
 
 export const DivRound = styled.View`
