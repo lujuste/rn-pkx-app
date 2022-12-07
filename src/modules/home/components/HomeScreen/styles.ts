@@ -16,6 +16,14 @@ export const View = styled.ScrollView`
   padding: 10px 24px 20px 14px;
 `;
 
+export const ViewFlex = styled.View`
+  flex: 1;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 export const Button = styled.Pressable`
   width: 100;
   height: 40;
@@ -27,6 +35,8 @@ export const Button = styled.Pressable`
 export const Text = styled.Text`
   color: white;
   font-size: 16px;
+  color: #000;
+  font-weight: bold;
 `;
 
 export const WrapperPokemon = styled.View`
@@ -60,13 +70,16 @@ export const DivName = styled.View`
 export const DivDetails = styled.View`
   width: 100%;
   height: 58;
-  background: #d9d9d9;
+
   display: flex;
 `;
 
-export const Round = styled.View`
-  width: 78;
-  height: 78;
-  border-radius: 38px;
-  background: #d9d9d9;
+export const Round = styled.ImageBackground`
+  width: 100;
+  height: 80;
+  /* border-radius: 38px; */
+`;
+
+export const Description = styled.Text`
+  margin-left: 10px;
 `;
