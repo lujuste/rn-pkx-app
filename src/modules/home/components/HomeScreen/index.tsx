@@ -28,6 +28,7 @@ import PopupMenu from "../PopupMenu";
 import api from "../../../../services/api";
 import axios, { AxiosResponse } from "axios";
 import { getPokemon, getPokemonsData } from "../../../../utils/pokeApi";
+import { useMainHook } from "../../hooks/main";
 
 interface INavigation extends NativeStackNavigationProp<any, any> {}
 
@@ -45,7 +46,7 @@ interface PokemonProps {
 
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<INavigation>();
-  const [pokemons, setPokemons] = useState<any>([]);
+  const { pokemons, setPokemons } = useMainHook();
   const [viewOptions, setViewOption] = useState(false);
   const [loading, setLoading] = useState(true);
   const handleModal = useCallback(() => {

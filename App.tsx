@@ -5,12 +5,15 @@ import HomeScreen from "./src/modules/home/components/HomeScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import RouteApp from "./src/routes/RouteApp";
 import { MenuProvider } from "react-native-popup-menu";
+import { MainProvider } from "./src/modules/home/hooks/main";
 
 export default function App() {
   return (
     <NavigationContainer>
       <MenuProvider>
-        <RouteApp />
+        <MainProvider>
+          <RouteApp />
+        </MainProvider>
       </MenuProvider>
     </NavigationContainer>
   );

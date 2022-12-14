@@ -34,6 +34,7 @@ import {
   View,
   Easing,
 } from "react-native";
+import { useMainHook } from "../../hooks/main";
 
 interface HeaderProps {
   activeOptions?: boolean;
@@ -41,7 +42,8 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ activeOptions, setActiveOptions }) => {
-  const [searchActive, setSearchActive] = useState<"open" | "closed">("closed");
+  const { searchActive, setSearchActive, pokemonValue, setPokemonValue } =
+    useMainHook();
 
   const handleActiveSearchBox = useCallback(
     (type: "open" | "closed") => {
@@ -92,7 +94,11 @@ const Header: React.FC<HeaderProps> = ({ activeOptions, setActiveOptions }) => {
               ></Ionicons>
             </ClosedButton>
             <AreaInput>
-              <InputDefault />
+              <InputDefault
+                onSubmitEditing={(event) =>
+                  setPokemonValue(event.nativeEvent.text)
+                }
+              />
             </AreaInput>
           </InputWrapper>
         </>
