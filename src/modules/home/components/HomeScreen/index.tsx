@@ -26,9 +26,22 @@ import Header from "../Header";
 import { MenuDots } from "../Header/styles";
 import PopupMenu from "../PopupMenu";
 import api from "../../../../services/api";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
+import { getPokemon, getPokemonsData } from "../../../../utils/pokeApi";
 
 interface INavigation extends NativeStackNavigationProp<any, any> {}
+
+interface RequestPokedexProps {
+  count?: number;
+  next?: string;
+  previous?: any;
+  results?: PokemonProps[];
+}
+
+interface PokemonProps {
+  name: string;
+  url: string;
+}
 
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<INavigation>();
@@ -41,26 +54,19 @@ const HomeScreen: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      try {
-        const requestPokemons = await api.get("pokemon?limit=50");
-        setPokemons(requestPokemons.data.results);
-        const lengthOfPokemons = requestPokemons.data.results.length;
-        const endpoints: any = [];
+      const responsePokemons:
+        | AxiosResponse<RequestPokedexProps, any>
+        | undefined = await getPokemon(20);
 
-        for (let i = 1; i < lengthOfPokemons; i++) {
-          endpoints.push(`https://pokeapi.co/api/v2/pokemon/${i}`);
-        }
-
-        let response = axios
-          .all(endpoints.map((endpoint: any) => axios.get(endpoint)))
-          .then((res: any) => {
-            setLoading(false);
-            setPokemons(res);
-          });
-      } catch (err) {
-        setLoading(false);
-        console.log(err, "error when request pokemons");
+      const promises = responsePokemons?.data?.results?.map(async (pokemon) => {
+        return await getPokemonsData(pokemon.url);
+      });
+      let results;
+      if (promises) {
+        results = await Promise.all(promises);
+        setPokemons(results);
       }
+      setLoading(false);
     })();
   }, []);
 
@@ -78,16 +84,16 @@ const HomeScreen: React.FC = () => {
               <DivRound>
                 <Round
                   source={{
-                    uri: pokemon?.data?.sprites?.front_default,
+                    uri: pokemon?.sprites?.front_default,
                   }}
                 />
               </DivRound>
               <DivName>
                 <DivDetails>
-                  <Text> {pokemon?.data?.name.toUpperCase()} </Text>
+                  <Text> {pokemon?.name.toUpperCase()} </Text>
                   <Description>
-                    {pokemon.data &&
-                      `Clique para conhecer melhor\no pokemon ${pokemon?.data?.name}`}{" "}
+                    {pokemon &&
+                      `Veja as principais\ncaracteristicas do ${pokemon?.name}`}
                   </Description>
                 </DivDetails>
               </DivName>
