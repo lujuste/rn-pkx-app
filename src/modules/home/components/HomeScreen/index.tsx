@@ -1,32 +1,25 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import {
-  Button as ButtonNative,
-  Text as TextNative,
-  View as ViewNative,
-  ActivityIndicator,
-} from "react-native";
-import Modal from "react-native-modal";
+import { ActivityIndicator, FlatList, useWindowDimensions } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
-  Button,
   Container,
   Description,
   DivDetails,
   DivName,
   DivRound,
+  EmptyContainer,
+  Rect,
   Round,
   Text,
+  TextPokemonNotFound,
+  TextType,
   View,
   ViewFlex,
   WrapperPokemon,
 } from "./styles";
-import Icon from "../../../../assets/home.svg";
 import Header from "../Header";
-import { MenuDots } from "../Header/styles";
-import PopupMenu from "../PopupMenu";
-import api from "../../../../services/api";
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { getPokemon, getPokemonsData } from "../../../../utils/pokeApi";
 import { useMainHook } from "../../hooks/main";
 
@@ -45,62 +38,111 @@ interface PokemonProps {
 }
 
 const HomeScreen: React.FC = () => {
+  const { height, width } = useWindowDimensions();
+
   const navigation = useNavigation<INavigation>();
-  const { pokemons, setPokemons } = useMainHook();
-  const [viewOptions, setViewOption] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const {
+    pokemons,
+    setPokemons,
+    pokemonValue,
+    loading,
+    setLoading,
+    notFoundValue,
+    viewOptions,
+    setViewOption,
+  } = useMainHook();
+
   const handleModal = useCallback(() => {
     setViewOption(!viewOptions);
   }, []);
 
+  const WrapperPoke = (data: any) => {
+    return (
+      <WrapperPokemon onPress={() => navigation.navigate("PokemonScreen")}>
+        <DivRound>
+          <Round
+            source={{
+              uri: data?.pokemon?.sprites?.front_default,
+            }}
+          />
+        </DivRound>
+        <DivName>
+          <DivDetails>
+            <Text> {data?.pokemon?.name?.toUpperCase()} </Text>
+            <Description>
+              {data?.pokemon?.types?.map((type: any) => (
+                <Rect type={type?.type?.name}>
+                  <TextType>{type?.type?.name} </TextType>
+                </Rect>
+              ))}
+            </Description>
+          </DivDetails>
+        </DivName>
+      </WrapperPokemon>
+    );
+  };
+
+  const EmptyPokemonData = () => {
+    return (
+      <EmptyContainer height={height}>
+        <TextPokemonNotFound>
+          Sorry, but this pokemon not exist :(
+        </TextPokemonNotFound>
+      </EmptyContainer>
+    );
+  };
+
   useEffect(() => {
     (async () => {
-      const responsePokemons:
-        | AxiosResponse<RequestPokedexProps, any>
-        | undefined = await getPokemon(20);
-
-      const promises = responsePokemons?.data?.results?.map(async (pokemon) => {
-        return await getPokemonsData(pokemon.url);
-      });
-      let results;
-      if (promises) {
-        results = await Promise.all(promises);
-        setPokemons(results);
+      try {
+        if (!notFoundValue) {
+          setLoading(true);
+        }
+        const responsePokemons:
+          | AxiosResponse<RequestPokedexProps, any>
+          | undefined = await getPokemon(20);
+        const promises = responsePokemons?.data?.results?.map(
+          async (pokemon) => {
+            return await getPokemonsData(pokemon.url);
+          }
+        );
+        let results;
+        if (promises) {
+          results = await Promise.all(promises);
+          if (!pokemonValue) {
+            setPokemons([...results]);
+          }
+        }
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+        setLoading(false);
       }
-      setLoading(false);
     })();
-  }, []);
+  }, [pokemonValue]);
 
   return (
     <Container>
-      <Header activeOptions={viewOptions} setActiveOptions={setViewOption} />
+      <Header />
       {loading ? (
         <ViewFlex>
           <ActivityIndicator size="large" color="#02be91" />
         </ViewFlex>
       ) : (
-        <View overScrollMode="never">
-          {pokemons?.map((pokemon: any, index: number) => (
-            <WrapperPokemon key={String(index)}>
-              <DivRound>
-                <Round
-                  source={{
-                    uri: pokemon?.sprites?.front_default,
-                  }}
-                />
-              </DivRound>
-              <DivName>
-                <DivDetails>
-                  <Text> {pokemon?.name.toUpperCase()} </Text>
-                  <Description>
-                    {pokemon &&
-                      `Veja as principais\ncaracteristicas do ${pokemon?.name}`}
-                  </Description>
-                </DivDetails>
-              </DivName>
-            </WrapperPokemon>
-          ))}
-        </View>
+        <>
+          {pokemons ? (
+            <FlatList
+              data={pokemons}
+              contentContainerStyle={{ marginBottom: 40 }}
+              renderItem={({ item }) => <WrapperPoke pokemon={item} />}
+              style={{ marginHorizontal: 20 }}
+              keyExtractor={(item) => String(Math.random())}
+              ListEmptyComponent={EmptyPokemonData}
+            />
+          ) : (
+            <></>
+          )}
+        </>
       )}
     </Container>
   );

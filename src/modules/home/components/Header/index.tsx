@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   AreaInput,
@@ -33,17 +33,32 @@ import {
   Animated,
   View,
   Easing,
+  NativeSyntheticEvent,
+  TextInputSubmitEditingEventData,
 } from "react-native";
 import { useMainHook } from "../../hooks/main";
+import { searchPokemon } from "../../../../utils/pokeApi";
 
 interface HeaderProps {
   activeOptions?: boolean;
-  setActiveOptions: React.Dispatch<React.SetStateAction<boolean>>;
+  setActiveOptions?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Header: React.FC<HeaderProps> = ({ activeOptions, setActiveOptions }) => {
-  const { searchActive, setSearchActive, pokemonValue, setPokemonValue } =
-    useMainHook();
+  const {
+    searchActive,
+    setSearchActive,
+    pokemonValue,
+    setPokemonValue,
+    pokemons,
+    setPokemons,
+    loading,
+    setLoading,
+    notFoundValue,
+    setNotFoundValue,
+    viewOptions,
+    setViewOption,
+  } = useMainHook();
 
   const handleActiveSearchBox = useCallback(
     (type: "open" | "closed") => {
@@ -65,22 +80,52 @@ const Header: React.FC<HeaderProps> = ({ activeOptions, setActiveOptions }) => {
     { name: "Settings", action: () => Alert.alert("Ola") },
   ];
 
-  const scale = useRef(new Animated.Value(0)).current;
+  const handleSearchPokemon = useCallback(
+    async (event: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
+      if (!event?.nativeEvent?.text) {
+        handleActiveSearchBox("closed");
+        setPokemonValue("");
+        return;
+      }
 
-  const handleResizeBox = useCallback((to: number) => {
-    to === 1 && setActiveOptions(true);
-    Animated.timing(scale, {
-      toValue: to,
-      useNativeDriver: true,
-      duration: 200,
-      easing: Easing.linear,
-    }).start(() => to === 0 && setActiveOptions(false));
-  }, []);
+      try {
+        setPokemons((state: any) => {
+          let cloneState: any = [...state];
+          cloneState = [];
+          return cloneState;
+        });
+        setLoading(true);
+        setPokemonValue(event?.nativeEvent?.text);
+        const searching = await searchPokemon(event?.nativeEvent?.text);
+
+        if (!searching) {
+          setPokemons((state: any) => {
+            let cloneState: any = [...state];
+            cloneState = [];
+            return cloneState;
+          });
+          setNotFoundValue((state) => !state);
+          setLoading(false);
+        } else {
+          setNotFoundValue(false);
+          setPokemons([searching]);
+          setLoading(false);
+        }
+
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+        setLoading(false);
+        setNotFoundValue(true);
+      }
+    },
+    [pokemons, pokemonValue, loading]
+  );
 
   return (
     <Container
       onTouchStart={() => {
-        setActiveOptions(false);
+        setViewOption(false);
       }}
     >
       {searchActive === "open" ? (
@@ -88,17 +133,17 @@ const Header: React.FC<HeaderProps> = ({ activeOptions, setActiveOptions }) => {
           <InputWrapper>
             <ClosedButton>
               <Ionicons
-                onPress={() => handleActiveSearchBox("closed")}
+                onPress={() => {
+                  setNotFoundValue(false);
+                  handleActiveSearchBox("closed");
+                  setPokemonValue("");
+                }}
                 name="close"
                 size={25}
               ></Ionicons>
             </ClosedButton>
             <AreaInput>
-              <InputDefault
-                onSubmitEditing={(event) =>
-                  setPokemonValue(event.nativeEvent.text)
-                }
-              />
+              <InputDefault onSubmitEditing={handleSearchPokemon} />
             </AreaInput>
           </InputWrapper>
         </>

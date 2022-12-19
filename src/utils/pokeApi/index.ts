@@ -16,8 +16,10 @@ interface PokemonProps {
 
 export const searchPokemon = async (pokemon: string) => {
   try {
-    let url: RequestPokedexProps = await api.get(`pokemon/${pokemon}`);
-    return url;
+    const response = await fetch(
+      `https://pokeapi.co/api/v2/pokemon/${pokemon}`
+    );
+    return await response.json();
   } catch (err) {
     console.log(err, "error when get search pokemon");
   }

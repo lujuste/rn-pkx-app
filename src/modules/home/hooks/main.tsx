@@ -15,6 +15,12 @@ interface MainContextData {
   setSearchActive: React.Dispatch<React.SetStateAction<"open" | "closed">>;
   pokemonValue: string;
   setPokemonValue: React.Dispatch<React.SetStateAction<string>>;
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  notFoundValue: boolean;
+  setNotFoundValue: React.Dispatch<React.SetStateAction<boolean>>;
+  viewOptions: boolean;
+  setViewOption: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface MainProviderProps {
@@ -27,6 +33,9 @@ const MainProvider: React.FC<MainProviderProps> = ({ children }) => {
   const [pokemons, setPokemons] = useState<any>([]);
   const [searchActive, setSearchActive] = useState<"open" | "closed">("closed");
   const [pokemonValue, setPokemonValue] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [notFoundValue, setNotFoundValue] = useState(false);
+  const [viewOptions, setViewOption] = useState(false);
 
   return (
     <MainContext.Provider
@@ -37,6 +46,12 @@ const MainProvider: React.FC<MainProviderProps> = ({ children }) => {
         setSearchActive,
         pokemonValue,
         setPokemonValue,
+        loading,
+        setLoading,
+        notFoundValue,
+        setNotFoundValue,
+        viewOptions,
+        setViewOption,
       }}
     >
       {children}

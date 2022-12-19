@@ -1,5 +1,25 @@
-//@ts-ignore
 import styled from "styled-components/native";
+
+const handleColorType = (type: string) => {
+  switch (type) {
+    case "grass":
+      return "color: #03a9f3; background: #00A5e3;";
+    case "poison":
+      return "color: #fff; background: #00CDAC;";
+    case "fire":
+      return "color: #fff; background: #FF5768;";
+    case "flying":
+      return "color: #fff; background: #f56342;";
+    case "normal":
+      return "color: #fff; background: #C05780;";
+    case "bug":
+      return "color: #fff; background: #FF60A8;";
+    case "water":
+      return "color: #fff; background: #00A5E3;";
+    default:
+      return "color: #fff; background: #00A5E3;";
+  }
+};
 
 export const Container = styled.View`
   flex: 1;
@@ -39,7 +59,7 @@ export const Text = styled.Text`
   font-weight: bold;
 `;
 
-export const WrapperPokemon = styled.View`
+export const WrapperPokemon = styled.TouchableOpacity`
   display: flex;
   width: 100%;
   height: 100px;
@@ -80,6 +100,43 @@ export const Round = styled.ImageBackground`
   /* border-radius: 38px; */
 `;
 
-export const Description = styled.Text`
-  margin-left: 10px;
+export const Description = styled.View`
+  margin-left: 3px;
+  display: flex;
+  flex-direction: row;
+  height: 70px;
+  max-width: 200px;
+  align-items: center;
+`;
+
+export const Rect = styled.View<{ type?: string }>`
+  height: 47px;
+  background: blue;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border-radius: 5px;
+  margin-right: 10px;
+  ${({ type }: any) => handleColorType(type)}
+`;
+
+export const TextType = styled.Text`
+  font-size: 16px;
+  color: white;
+  font-weight: bold;
+`;
+
+export const EmptyContainer = styled.View<{ height: any }>`
+  display: flex;
+  width: 100%;
+  overflow-y: hidden;
+  align-items: center;
+  justify-content: center;
+  height: ${({ height }) => String(Math.ceil(height - 200))};
+`;
+
+export const TextPokemonNotFound = styled.Text`
+  font-size: 20px;
+  color: black;
 `;
