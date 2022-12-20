@@ -14,7 +14,6 @@ import {
   Text,
   TextPokemonNotFound,
   TextType,
-  View,
   ViewFlex,
   WrapperPokemon,
 } from "./styles";
@@ -58,7 +57,14 @@ const HomeScreen: React.FC = () => {
 
   const WrapperPoke = (data: any) => {
     return (
-      <WrapperPokemon onPress={() => navigation.navigate("PokemonScreen")}>
+      <WrapperPokemon
+        onPress={() =>
+          navigation.navigate("PokemonScreen", {
+            pokemonId: data?.pokemon?.id,
+            pokemonName: data?.pokemon?.name,
+          })
+        }
+      >
         <DivRound>
           <Round
             source={{
